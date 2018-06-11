@@ -1,0 +1,40 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+"""
+Created on Sun May 27 12:35:35 2018
+
+@author: jtsai
+"""
+from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+from sklearn.neighbors import KNeighborsClassifier
+
+
+le=LabelEncoder()
+"""
+df = pd.DataFrame({'pets':['cat', 'dog', 'cat', 'monkey', 'dog', 'dog'], 'owner':['Champ', 'Ron', 'Brick', 'Champ', 'Veronica', 'Ron'], 'location':['San_Diego', 'New_York', 'New_York', 'San_Diego', 'San_Diego', 'New_York']})
+df.apply(le.fit_transform)
+"""
+
+#y = data["review_scores_ratings"]
+
+
+X_train, X_test, y_train, y_test = train_test_split(data, y, test_size=0.1115, random_state=1)
+
+X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=0.125, random_state=1)
+
+for col in X_test.columns.values:
+       # Encoding only categorical variables
+       if X_test[col].dtypes=='object':
+       # Using whole data to form an exhaustive list of levels
+           data=X_train[col].append(X_test[col])
+           le.fit(data.values)
+           X_train[col]=le.transform(X_train[col])
+           X_test[col]=le.transform(X_test[col])
+           X_val[col]=le.transform(X_val[col])
+
+knn = KNeighborsClassifier(n_neighbors=3)
+knn.fit(X_train, y_train)
+pred = knn.predict(X_test)
+print accuracy_score(y_test, pred)
+
